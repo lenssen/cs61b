@@ -2,6 +2,7 @@ package game2048;
 
 import java.util.Formatter;
 import java.util.Observable;
+import java.util.concurrent.TimeoutException;
 
 
 /** The state of a game of 2048.
@@ -138,9 +139,9 @@ public class Model extends Observable {
      */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
-        for(int i = 0; i < b.size(); i += 1){
-            for( int j = 0; j < b.size(); j +=1){
-                if(b.tile(i, j) == null){
+        for(int col = 0; col < b.size(); col += 1){
+            for( int row = 0; row < b.size(); row +=1){
+                if(b.tile(col, row) == null){
                     return true;
                 }
             }
@@ -155,10 +156,44 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
-        for(int i = 0; i < b.size(); i += 1){
-            for( int j = 0; j < b.size(); j +=1){
-                Tile maxtile = b.tile(i,j);
+        for(int col = 0; col < b.size(); col += 1){
+            for( int row = 0; row < b.size(); row +=1){
+                Tile maxtile = b.tile(col,row);
                 if(maxtile != null && maxtile.value() == MAX_PIECE){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Returns true if there is any move exist vertically in the board */
+    public static boolean moveexistvertically(Board b) {
+        for (int col = 0; col <= b.size() - 1; col += 1) {
+            for (int row = 0; row <= b.size() - 1; row += 1) {
+                if(row  == b.size() -1 ){
+                    break;
+                }
+                Tile tile1 = b.tile(col, row);
+                Tile tile2 = b.tile(col, row + 1);
+                if (tile1.value() == tile2.value()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Returns true if there is any move exist sideways in the board */
+    public static boolean moveexistsideways(Board b) {
+        for (int col = 0; col <= b.size() - 1; col += 1) {
+            for (int row = 0; row <= b.size() - 1; row += 1) {
+                if(col  == b.size() -1 ){
+                    break;
+                }
+                Tile tile1 = b.tile(col, row);
+                Tile tile2 = b.tile(col + 1, row );
+                if (tile1.value() == tile2.value()) {
                     return true;
                 }
             }
@@ -172,8 +207,18 @@ public class Model extends Observable {
      * 1. There is at least one empty space on the board.
      * 2. There are two adjacent tiles with the same value.
      */
+
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if(emptySpaceExists(b)) {
+            return true;
+        }
+        if(moveexistvertically(b)){
+            return true;
+        }
+        if(moveexistsideways(b)){
+            return true;
+        }
         return false;
     }
 
