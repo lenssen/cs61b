@@ -104,6 +104,30 @@ public class Model extends Observable {
         setChanged();
     }
 
+    /** moves the tile to the empty space */
+    public static void movetile(Board b){
+        for(int col = b.size() - 1; col >= 0; col -= 1){
+            for( int row = b.size() - 1; row >= 0; row -=1){
+                Tile tile1 = b.tile(col, row);
+                if(tile1 != null){
+                    continue;
+                    }
+                else{
+                    while(row != 0){
+                        Tile tile2 = b.tile(col, row  -1 );
+                        if(tile2!= null){
+                            b.move(col, row, tile2);
+                            row -= 1;
+                        }
+                        else{
+                            row -=1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /** Tilt the board toward SIDE.
      *
      * 1. If two Tile objects are adjacent in the direction of motion and have
@@ -118,8 +142,23 @@ public class Model extends Observable {
      */
     public void tilt(Side side) {
         // TODO: Fill in this function.
-
         checkGameOver();
+        Board b = _board;
+        for (int col = 0; col <= b.size() - 1; col += 1) {
+            for (int row = 0; row <= b.size() - 1; row += 1) {
+                if(row  == b.size() -1 ){
+                    break;
+                }
+                Tile tile1 = b.tile(col, row);
+                Tile tile2 = b.tile(col, row + 1);
+                if(tile1 != null && tile2!= null) {
+                    if (tile1.value() == tile2.value()) {
+                        b.move(col, row + 1, tile1);
+                    }
+                }
+            }
+        }
+        movetile(b);
     }
 
     /** Checks if the game is over and sets the gameOver variable
