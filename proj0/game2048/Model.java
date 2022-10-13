@@ -2,7 +2,6 @@ package game2048;
 
 import java.util.Formatter;
 import java.util.Observable;
-import java.util.concurrent.TimeoutException;
 
 
 /** The state of a game of 2048.
@@ -113,20 +112,52 @@ public class Model extends Observable {
                     continue;
                     }
                 else{
-                    while(row != 0){
-                        Tile tile2 = b.tile(col, row  -1 );
+                    int rowcheck = row;
+                    while(rowcheck != 0){
+                        Tile tile2 = b.tile(col, rowcheck  -1 );
                         if(tile2!= null){
                             b.move(col, row, tile2);
-                            row -= 1;
+                            rowcheck -= 1;
                         }
                         else{
-                            row -=1;
+                            rowcheck -=1;
                         }
                     }
                 }
             }
         }
     }
+
+    /** updates the game score */
+    public void updatescore(int tile1value, int tile2value){
+        _score += tile1value + tile2value;
+    }
+
+    /** merges tiles if the tiles have same value */
+    public Board mergetile(Board b){
+        int score = _score;
+        for(int col = b.size() - 1; col >= 0; col -= 1){
+            for( int row = b.size() - 1; row >= 0; row -=1){
+                Tile tile1 = b.tile(col, row);
+                if(tile1 != null) {
+                    int rowcheck = row;
+                    while (rowcheck > 0) {
+                        Tile tile2 = b.tile(col, rowcheck - 1);
+                        if (tile2 != null && tile1.value() == tile2.value()) {
+                            b.move(col, row, tile2);
+                            updatescore(tile2.value(), tile2.value());
+                            rowcheck = 0;
+                        } else {
+                            rowcheck -= 1;
+                        }
+                    }
+                }
+            }
+        }
+        return b;
+    }
+
+
 
     /** Tilt the board toward SIDE.
      *
@@ -144,21 +175,7 @@ public class Model extends Observable {
         // TODO: Fill in this function.
         checkGameOver();
         Board b = _board;
-        for (int col = 0; col <= b.size() - 1; col += 1) {
-            for (int row = 0; row <= b.size() - 1; row += 1) {
-                if(row  == b.size() -1 ){
-                    break;
-                }
-                Tile tile1 = b.tile(col, row);
-                Tile tile2 = b.tile(col, row + 1);
-                if(tile1 != null && tile2!= null) {
-                    if (tile1.value() == tile2.value()) {
-                        b.move(col, row + 1, tile1);
-                    }
-                }
-            }
-        }
-        movetile(b);
+        movetile(mergetile(b));
     }
 
     /** Checks if the game is over and sets the gameOver variable
