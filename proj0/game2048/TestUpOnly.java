@@ -101,4 +101,46 @@ public class TestUpOnly extends TestUtils {
         model.tilt(Side.NORTH);
         checkModel(after, 4, 0, prevBoard, Side.NORTH);
     }
+
+    @Test
+    public void testUpTrickyMerge1() {
+        int[][] before = new int[][] {
+                {4 , 0, 0, 0},
+                {0 , 0, 0, 0},
+                {2 , 0, 0, 0},
+                {16, 8, 0, 0},
+        };
+        int[][] after = new int[][] {
+                {4 , 8, 0, 0},
+                {2 , 0, 0, 0},
+                {16, 0, 0, 0},
+                {0,  0, 0, 0},
+        };
+
+        updateModel(before, 0, 0, false);
+        String prevBoard = model.toString();
+        model.tilt(Side.NORTH);
+        checkModel(after, 0, 0, prevBoard, Side.NORTH);
+    }
+
+    @Test
+    public void testside() {
+        int[][] before = new int[][] {
+                {0, 0, 0, 0},
+                {2, 0, 0, 0},
+                {8, 0, 0, 0},
+                {2, 0, 0, 0},
+        };
+        int[][] after = new int[][] {
+                {0, 0, 0, 0},
+                {2, 0, 0, 0},
+                {8, 0, 0, 0},
+                {2, 0, 0, 0},
+        };
+
+        updateModel(before, 0, 0, false);
+        String prevBoard = model.toString();
+        model.tilt(Side.SOUTH);
+        checkModel(after, 0, 0, prevBoard, Side.SOUTH);
+    }
 }

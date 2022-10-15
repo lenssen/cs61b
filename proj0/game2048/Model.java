@@ -117,7 +117,7 @@ public class Model extends Observable {
                         Tile tile2 = b.tile(col, rowcheck  -1 );
                         if(tile2!= null){
                             b.move(col, row, tile2);
-                            rowcheck -= 1;
+                            rowcheck = 0;
                         }
                         else{
                             rowcheck -=1;
@@ -148,7 +148,12 @@ public class Model extends Observable {
                             updatescore(tile2.value(), tile2.value());
                             rowcheck = 0;
                         } else {
-                            rowcheck -= 1;
+                            if(tile2 == null) {
+                                rowcheck -= 1;
+                            }
+                            else{
+                                break;
+                            }
                         }
                     }
                 }
@@ -175,7 +180,11 @@ public class Model extends Observable {
         // TODO: Fill in this function.
         checkGameOver();
         Board b = _board;
-        movetile(mergetile(b));
+        b.setViewingPerspective(side);
+        mergetile(b);
+        movetile(b);
+        b.setViewingPerspective(side.NORTH);
+
     }
 
     /** Checks if the game is over and sets the gameOver variable
